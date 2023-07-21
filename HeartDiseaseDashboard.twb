@@ -260,6 +260,9 @@
       <column aggregation='None' datatype='integer' name='[Age (bin)]' role='dimension' type='quantitative'>
         <calculation class='bin' decimals='0' formula='[age]' peg='0' size='4.12' />
       </column>
+      <column caption='no_males' datatype='integer' name='[Calculation_1405123133788794881]' role='measure' type='quantitative'>
+        <calculation class='tableau' formula='SUM(IF [target] = 1 THEN 1 ELSE 0 END)' />
+      </column>
       <column caption='IncorrectCases' datatype='real' name='[Calculation_1418915407478358017]' role='measure' type='quantitative'>
         <calculation class='tableau' formula='SCRIPT_REAL(&quot;&#13;&#10;return tabpy.query(&apos;getIncorrectCases&apos;)[&apos;response&apos;]&quot;,&#13;&#10;SUM([target]))'>
           <table-calc ordering-type='Rows' />
@@ -391,6 +394,14 @@
               </multibucket>
             </map>
           </encoding>
+          <encoding attr='color' field='[none:target:ok]' type='palette'>
+            <map to='#89b8da'>
+              <bucket>0</bucket>
+            </map>
+            <map to='#f5715d'>
+              <bucket>1</bucket>
+            </map>
+          </encoding>
           <encoding attr='color' field='[none:target:ok]&#10;[none:sex:ok]' type='palette'>
             <map to='#5b8cb8'>
               <multibucket>
@@ -415,14 +426,6 @@
                 <bucket>1</bucket>
                 <bucket>0</bucket>
               </multibucket>
-            </map>
-          </encoding>
-          <encoding attr='color' field='[none:target:ok]' type='palette'>
-            <map to='#89b8da'>
-              <bucket>0</bucket>
-            </map>
-            <map to='#f5715d'>
-              <bucket>1</bucket>
             </map>
           </encoding>
         </style-rule>
@@ -459,19 +462,6 @@
       </_.fcp.ObjectModelEncapsulateLegacy.true...object-graph>
     </datasource>
   </datasources>
-  <actions>
-    <action caption='Filter1' name='[Action1_4343B06DE26240A885D0373FEE4904C5]'>
-      <activation auto-clear='true' type='on-select' />
-      <source datasource='federated.0b9jao80r7rh8214xjojh13hjmun' type='datasource'>
-        <exclude-sheet name='Accuracy' />
-      </source>
-      <command command='tsc:tsl-filter'>
-        <param name='exclude' value='Accuracy' />
-        <param name='special-fields' value='all' />
-        <param name='target' value='EDA and Model evaluation' />
-      </command>
-    </action>
-  </actions>
   <worksheets>
     <worksheet name='Accuracy'>
       <layout-options>
@@ -587,54 +577,15 @@
             </column>
             <column caption='Age' datatype='integer' name='[age]' role='measure' type='quantitative' />
             <column-instance column='[age]' derivation='Count' name='[cnt:age:qk]' pivot='key' type='quantitative' />
-            <column aggregation='Sum' caption='Exang' datatype='integer' name='[exang]' role='dimension' type='ordinal'>
-              <aliases>
-                <alias key='0' value='Exercise-Induced Angina' />
-                <alias key='1' value='Not Exercise Induced' />
-              </aliases>
-            </column>
             <column-instance column='[Age (bin)]' derivation='None' name='[none:Age (bin):qk]' pivot='key' type='quantitative' />
-            <column-instance column='[age]' derivation='None' name='[none:age:ok]' pivot='key' type='ordinal' />
             <column-instance column='[target]' derivation='None' name='[none:target:ok]' pivot='key' type='ordinal' />
-            <column-instance column='[thalach]' derivation='None' name='[none:thalach:ok]' pivot='key' type='ordinal' />
-            <column caption='Sex' datatype='integer' name='[sex]' role='dimension' type='ordinal'>
-              <aliases>
-                <alias key='0' value='Female' />
-                <alias key='1' value='Male' />
-              </aliases>
-            </column>
             <column aggregation='Sum' caption='Target' datatype='integer' name='[target]' role='dimension' type='ordinal'>
               <aliases>
                 <alias key='0' value='Negative' />
                 <alias key='1' value='Positive' />
               </aliases>
             </column>
-            <column caption='Thalach' datatype='integer' name='[thalach]' role='measure' type='quantitative' />
           </datasource-dependencies>
-          <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Age,Target,Thalach)]'>
-            <groupfilter function='crossjoin' user:ui-action-filter='[Action1_4343B06DE26240A885D0373FEE4904C5]' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[none:age:ok]' />
-              <groupfilter function='level-members' level='[target]' />
-              <groupfilter function='level-members' level='[none:thalach:ok]' />
-            </groupfilter>
-          </filter>
-          <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Exang,Target)]'>
-            <groupfilter function='crossjoin' user:ui-action-filter='[Action1_4343B06DE26240A885D0373FEE4904C5]' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[exang]' />
-              <groupfilter function='level-members' level='[target]' />
-            </groupfilter>
-          </filter>
-          <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Sex,Target)]'>
-            <groupfilter function='crossjoin' user:ui-action-filter='[Action1_4343B06DE26240A885D0373FEE4904C5]' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[sex]' />
-              <groupfilter function='level-members' level='[target]' />
-            </groupfilter>
-          </filter>
-          <slices>
-            <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Exang,Target)]</column>
-            <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Age,Target,Thalach)]</column>
-            <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Sex,Target)]</column>
-          </slices>
           <aggregation value='true' />
         </view>
         <style>
@@ -719,57 +670,17 @@
             <column aggregation='None' datatype='integer' name='[Trestbps (bin)]' role='dimension' type='quantitative'>
               <calculation class='bin' decimals='0' formula='[trestbps]' peg='0' size='8.5' />
             </column>
-            <column caption='Age' datatype='integer' name='[age]' role='measure' type='quantitative' />
             <column-instance column='[trestbps]' derivation='Count' name='[cnt:trestbps:qk]' pivot='key' type='quantitative' />
-            <column aggregation='Sum' caption='Exang' datatype='integer' name='[exang]' role='dimension' type='ordinal'>
-              <aliases>
-                <alias key='0' value='Exercise-Induced Angina' />
-                <alias key='1' value='Not Exercise Induced' />
-              </aliases>
-            </column>
             <column-instance column='[Trestbps (bin)]' derivation='None' name='[none:Trestbps (bin):qk]' pivot='key' type='quantitative' />
-            <column-instance column='[age]' derivation='None' name='[none:age:ok]' pivot='key' type='ordinal' />
             <column-instance column='[target]' derivation='None' name='[none:target:ok]' pivot='key' type='ordinal' />
-            <column-instance column='[thalach]' derivation='None' name='[none:thalach:ok]' pivot='key' type='ordinal' />
-            <column caption='Sex' datatype='integer' name='[sex]' role='dimension' type='ordinal'>
-              <aliases>
-                <alias key='0' value='Female' />
-                <alias key='1' value='Male' />
-              </aliases>
-            </column>
             <column aggregation='Sum' caption='Target' datatype='integer' name='[target]' role='dimension' type='ordinal'>
               <aliases>
                 <alias key='0' value='Negative' />
                 <alias key='1' value='Positive' />
               </aliases>
             </column>
-            <column caption='Thalach' datatype='integer' name='[thalach]' role='measure' type='quantitative' />
             <column caption='Trestbps' datatype='integer' name='[trestbps]' role='measure' type='quantitative' />
           </datasource-dependencies>
-          <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Age,Target,Thalach)]'>
-            <groupfilter function='crossjoin' user:ui-action-filter='[Action1_4343B06DE26240A885D0373FEE4904C5]' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[none:age:ok]' />
-              <groupfilter function='level-members' level='[target]' />
-              <groupfilter function='level-members' level='[none:thalach:ok]' />
-            </groupfilter>
-          </filter>
-          <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Exang,Target)]'>
-            <groupfilter function='crossjoin' user:ui-action-filter='[Action1_4343B06DE26240A885D0373FEE4904C5]' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[exang]' />
-              <groupfilter function='level-members' level='[target]' />
-            </groupfilter>
-          </filter>
-          <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Sex,Target)]'>
-            <groupfilter function='crossjoin' user:ui-action-filter='[Action1_4343B06DE26240A885D0373FEE4904C5]' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[sex]' />
-              <groupfilter function='level-members' level='[target]' />
-            </groupfilter>
-          </filter>
-          <slices>
-            <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Exang,Target)]</column>
-            <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Age,Target,Thalach)]</column>
-            <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Sex,Target)]</column>
-          </slices>
           <aggregation value='true' />
         </view>
         <style>
@@ -853,21 +764,9 @@
           </datasources>
           <datasource-dependencies datasource='federated.0b9jao80r7rh8214xjojh13hjmun'>
             <column caption='Age' datatype='integer' name='[age]' role='measure' type='quantitative' />
-            <column aggregation='Sum' caption='Exang' datatype='integer' name='[exang]' role='dimension' type='ordinal'>
-              <aliases>
-                <alias key='0' value='Exercise-Induced Angina' />
-                <alias key='1' value='Not Exercise Induced' />
-              </aliases>
-            </column>
             <column-instance column='[age]' derivation='None' name='[none:age:qk]' pivot='key' type='quantitative' />
             <column-instance column='[target]' derivation='None' name='[none:target:ok]' pivot='key' type='ordinal' />
             <column-instance column='[thalach]' derivation='None' name='[none:thalach:qk]' pivot='key' type='quantitative' />
-            <column caption='Sex' datatype='integer' name='[sex]' role='dimension' type='ordinal'>
-              <aliases>
-                <alias key='0' value='Female' />
-                <alias key='1' value='Male' />
-              </aliases>
-            </column>
             <column aggregation='Sum' caption='Target' datatype='integer' name='[target]' role='dimension' type='ordinal'>
               <aliases>
                 <alias key='0' value='Negative' />
@@ -876,22 +775,6 @@
             </column>
             <column caption='Thalach' datatype='integer' name='[thalach]' role='measure' type='quantitative' />
           </datasource-dependencies>
-          <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Exang,Target)]'>
-            <groupfilter function='crossjoin' user:ui-action-filter='[Action1_4343B06DE26240A885D0373FEE4904C5]' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[exang]' />
-              <groupfilter function='level-members' level='[target]' />
-            </groupfilter>
-          </filter>
-          <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Sex,Target)]'>
-            <groupfilter function='crossjoin' user:ui-action-filter='[Action1_4343B06DE26240A885D0373FEE4904C5]' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[sex]' />
-              <groupfilter function='level-members' level='[target]' />
-            </groupfilter>
-          </filter>
-          <slices>
-            <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Exang,Target)]</column>
-            <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Sex,Target)]</column>
-          </slices>
           <aggregation value='true' />
         </view>
         <style>
@@ -984,7 +867,6 @@
             <column caption='0' datatype='integer' name='[Calculation_2210141566811770885]' role='measure' type='quantitative' user:unnamed='Sheet 8'>
               <calculation class='tableau' formula='0' />
             </column>
-            <column caption='Age' datatype='integer' name='[age]' role='measure' type='quantitative' />
             <column-instance column='[exang]' derivation='Count' name='[cnt:exang:qk]' pivot='key' type='quantitative' />
             <column aggregation='Sum' caption='Exang' datatype='integer' name='[exang]' role='dimension' type='ordinal'>
               <aliases>
@@ -992,19 +874,11 @@
                 <alias key='1' value='Not Exercise Induced' />
               </aliases>
             </column>
-            <column-instance column='[age]' derivation='None' name='[none:age:ok]' pivot='key' type='ordinal' />
             <column-instance column='[exang]' derivation='None' name='[none:exang:ok]' pivot='key' type='ordinal' />
             <column-instance column='[target]' derivation='None' name='[none:target:ok]' pivot='key' type='ordinal' />
-            <column-instance column='[thalach]' derivation='None' name='[none:thalach:ok]' pivot='key' type='ordinal' />
             <column-instance column='[exang]' derivation='Count' name='[pcto:cnt:exang:qk]' pivot='key' type='quantitative'>
               <table-calc ordering-type='Rows' type='PctTotal' />
             </column-instance>
-            <column caption='Sex' datatype='integer' name='[sex]' role='dimension' type='ordinal'>
-              <aliases>
-                <alias key='0' value='Female' />
-                <alias key='1' value='Male' />
-              </aliases>
-            </column>
             <column-instance column='[Calculation_2210141566811770885]' derivation='Sum' name='[sum:Calculation_2210141566811770885:qk]' pivot='key' type='quantitative' />
             <column aggregation='Sum' caption='Target' datatype='integer' name='[target]' role='dimension' type='ordinal'>
               <aliases>
@@ -1012,25 +886,7 @@
                 <alias key='1' value='Positive' />
               </aliases>
             </column>
-            <column caption='Thalach' datatype='integer' name='[thalach]' role='measure' type='quantitative' />
           </datasource-dependencies>
-          <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Age,Target,Thalach)]'>
-            <groupfilter function='crossjoin' user:ui-action-filter='[Action1_4343B06DE26240A885D0373FEE4904C5]' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[none:age:ok]' />
-              <groupfilter function='level-members' level='[target]' />
-              <groupfilter function='level-members' level='[none:thalach:ok]' />
-            </groupfilter>
-          </filter>
-          <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Sex,Target)]'>
-            <groupfilter function='crossjoin' user:ui-action-filter='[Action1_4343B06DE26240A885D0373FEE4904C5]' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[sex]' />
-              <groupfilter function='level-members' level='[target]' />
-            </groupfilter>
-          </filter>
-          <slices>
-            <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Age,Target,Thalach)]</column>
-            <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Sex,Target)]</column>
-          </slices>
           <aggregation value='true' />
         </view>
         <style>
@@ -1273,17 +1129,8 @@
             <datasource caption='heart' name='federated.0b9jao80r7rh8214xjojh13hjmun' />
           </datasources>
           <datasource-dependencies datasource='federated.0b9jao80r7rh8214xjojh13hjmun'>
-            <column caption='Age' datatype='integer' name='[age]' role='measure' type='quantitative' />
             <column-instance column='[target]' derivation='Count' name='[cnt:target:qk]' pivot='key' type='quantitative' />
-            <column aggregation='Sum' caption='Exang' datatype='integer' name='[exang]' role='dimension' type='ordinal'>
-              <aliases>
-                <alias key='0' value='Exercise-Induced Angina' />
-                <alias key='1' value='Not Exercise Induced' />
-              </aliases>
-            </column>
-            <column-instance column='[age]' derivation='None' name='[none:age:ok]' pivot='key' type='ordinal' />
             <column-instance column='[sex]' derivation='None' name='[none:sex:ok]' pivot='key' type='ordinal' />
-            <column-instance column='[thalach]' derivation='None' name='[none:thalach:ok]' pivot='key' type='ordinal' />
             <column caption='Sex' datatype='integer' name='[sex]' role='dimension' type='ordinal'>
               <aliases>
                 <alias key='0' value='Female' />
@@ -1296,35 +1143,12 @@
                 <alias key='1' value='Positive' />
               </aliases>
             </column>
-            <column caption='Thalach' datatype='integer' name='[thalach]' role='measure' type='quantitative' />
           </datasource-dependencies>
-          <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Age,Target,Thalach)]'>
-            <groupfilter function='crossjoin' user:ui-action-filter='[Action1_4343B06DE26240A885D0373FEE4904C5]' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[none:age:ok]' />
-              <groupfilter function='level-members' level='[target]' />
-              <groupfilter function='level-members' level='[none:thalach:ok]' />
-            </groupfilter>
-          </filter>
-          <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Exang,Target)]'>
-            <groupfilter function='crossjoin' user:ui-action-filter='[Action1_4343B06DE26240A885D0373FEE4904C5]' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[exang]' />
-              <groupfilter function='level-members' level='[target]' />
-            </groupfilter>
-          </filter>
-          <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Sex,Target)]'>
-            <groupfilter function='crossjoin' user:ui-action-filter='[Action1_4343B06DE26240A885D0373FEE4904C5]' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[sex]' />
-              <groupfilter function='level-members' level='[target]' />
-            </groupfilter>
-          </filter>
           <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[none:sex:ok]'>
-            <groupfilter function='level-members' level='[none:sex:ok]' user:ui-enumeration='all' user:ui-marker='enumerate' />
+            <groupfilter function='member' level='[none:sex:ok]' member='0' user:ui-domain='database' user:ui-enumeration='inclusive' user:ui-marker='enumerate' />
           </filter>
           <slices>
             <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[none:sex:ok]</column>
-            <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Exang,Target)]</column>
-            <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Age,Target,Thalach)]</column>
-            <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Sex,Target)]</column>
           </slices>
           <aggregation value='true' />
         </view>
@@ -1421,18 +1245,9 @@
             <column caption='0' datatype='integer' name='[Calculation_2210141566811770885]' role='measure' type='quantitative' user:unnamed='Sheet 8'>
               <calculation class='tableau' formula='0' />
             </column>
-            <column caption='Age' datatype='integer' name='[age]' role='measure' type='quantitative' />
             <column-instance column='[sex]' derivation='Count' name='[cnt:sex:qk]' pivot='key' type='quantitative' />
-            <column aggregation='Sum' caption='Exang' datatype='integer' name='[exang]' role='dimension' type='ordinal'>
-              <aliases>
-                <alias key='0' value='Exercise-Induced Angina' />
-                <alias key='1' value='Not Exercise Induced' />
-              </aliases>
-            </column>
-            <column-instance column='[age]' derivation='None' name='[none:age:ok]' pivot='key' type='ordinal' />
             <column-instance column='[sex]' derivation='None' name='[none:sex:ok]' pivot='key' type='ordinal' />
             <column-instance column='[target]' derivation='None' name='[none:target:ok]' pivot='key' type='ordinal' />
-            <column-instance column='[thalach]' derivation='None' name='[none:thalach:ok]' pivot='key' type='ordinal' />
             <column-instance column='[sex]' derivation='Count' name='[pcto:cnt:sex:qk]' pivot='key' type='quantitative'>
               <table-calc ordering-type='Rows' type='PctTotal' />
             </column-instance>
@@ -1449,25 +1264,7 @@
                 <alias key='1' value='Positive' />
               </aliases>
             </column>
-            <column caption='Thalach' datatype='integer' name='[thalach]' role='measure' type='quantitative' />
           </datasource-dependencies>
-          <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Age,Target,Thalach)]'>
-            <groupfilter function='crossjoin' user:ui-action-filter='[Action1_4343B06DE26240A885D0373FEE4904C5]' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[none:age:ok]' />
-              <groupfilter function='level-members' level='[target]' />
-              <groupfilter function='level-members' level='[none:thalach:ok]' />
-            </groupfilter>
-          </filter>
-          <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Exang,Target)]'>
-            <groupfilter function='crossjoin' user:ui-action-filter='[Action1_4343B06DE26240A885D0373FEE4904C5]' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[exang]' />
-              <groupfilter function='level-members' level='[target]' />
-            </groupfilter>
-          </filter>
-          <slices>
-            <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Exang,Target)]</column>
-            <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Age,Target,Thalach)]</column>
-          </slices>
           <aggregation value='true' />
         </view>
         <style>
@@ -1602,17 +1399,8 @@
             <datasource caption='heart' name='federated.0b9jao80r7rh8214xjojh13hjmun' />
           </datasources>
           <datasource-dependencies datasource='federated.0b9jao80r7rh8214xjojh13hjmun'>
-            <column caption='Age' datatype='integer' name='[age]' role='measure' type='quantitative' />
             <column-instance column='[target]' derivation='Count' name='[cnt:target:qk]' pivot='key' type='quantitative' />
-            <column aggregation='Sum' caption='Exang' datatype='integer' name='[exang]' role='dimension' type='ordinal'>
-              <aliases>
-                <alias key='0' value='Exercise-Induced Angina' />
-                <alias key='1' value='Not Exercise Induced' />
-              </aliases>
-            </column>
-            <column-instance column='[age]' derivation='None' name='[none:age:ok]' pivot='key' type='ordinal' />
             <column-instance column='[sex]' derivation='None' name='[none:sex:ok]' pivot='key' type='ordinal' />
-            <column-instance column='[thalach]' derivation='None' name='[none:thalach:ok]' pivot='key' type='ordinal' />
             <column caption='Sex' datatype='integer' name='[sex]' role='dimension' type='ordinal'>
               <aliases>
                 <alias key='0' value='Female' />
@@ -1625,35 +1413,12 @@
                 <alias key='1' value='Positive' />
               </aliases>
             </column>
-            <column caption='Thalach' datatype='integer' name='[thalach]' role='measure' type='quantitative' />
           </datasource-dependencies>
-          <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Age,Target,Thalach)]'>
-            <groupfilter function='crossjoin' user:ui-action-filter='[Action1_4343B06DE26240A885D0373FEE4904C5]' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[none:age:ok]' />
-              <groupfilter function='level-members' level='[target]' />
-              <groupfilter function='level-members' level='[none:thalach:ok]' />
-            </groupfilter>
-          </filter>
-          <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Exang,Target)]'>
-            <groupfilter function='crossjoin' user:ui-action-filter='[Action1_4343B06DE26240A885D0373FEE4904C5]' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[exang]' />
-              <groupfilter function='level-members' level='[target]' />
-            </groupfilter>
-          </filter>
-          <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Sex,Target)]'>
-            <groupfilter function='crossjoin' user:ui-action-filter='[Action1_4343B06DE26240A885D0373FEE4904C5]' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[sex]' />
-              <groupfilter function='level-members' level='[target]' />
-            </groupfilter>
-          </filter>
           <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[none:sex:ok]'>
-            <groupfilter function='level-members' level='[none:sex:ok]' user:ui-enumeration='all' user:ui-marker='enumerate' />
+            <groupfilter function='member' level='[none:sex:ok]' member='1' user:ui-domain='database' user:ui-enumeration='inclusive' user:ui-marker='enumerate' />
           </filter>
           <slices>
             <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[none:sex:ok]</column>
-            <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Exang,Target)]</column>
-            <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Age,Target,Thalach)]</column>
-            <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Sex,Target)]</column>
           </slices>
           <aggregation value='true' />
         </view>
@@ -1707,13 +1472,6 @@
             <encodings>
               <text column='[federated.0b9jao80r7rh8214xjojh13hjmun].[cnt:target:qk]' />
             </encodings>
-            <customized-label>
-              <formatted-text>
-                <run>&lt;</run>
-                <run>[federated.0b9jao80r7rh8214xjojh13hjmun].[cnt:target:qk]</run>
-                <run>&gt;</run>
-              </formatted-text>
-            </customized-label>
             <style>
               <style-rule element='cell'>
                 <format attr='text-align' value='center' />
@@ -1747,58 +1505,20 @@
             <datasource caption='heart' name='federated.0b9jao80r7rh8214xjojh13hjmun' />
           </datasources>
           <datasource-dependencies datasource='federated.0b9jao80r7rh8214xjojh13hjmun'>
-            <column caption='Age' datatype='integer' name='[age]' role='measure' type='quantitative' />
             <column-instance column='[target]' derivation='Count' name='[cnt:target:qk]' pivot='key' type='quantitative' />
-            <column aggregation='Sum' caption='Exang' datatype='integer' name='[exang]' role='dimension' type='ordinal'>
-              <aliases>
-                <alias key='0' value='Exercise-Induced Angina' />
-                <alias key='1' value='Not Exercise Induced' />
-              </aliases>
-            </column>
-            <column-instance column='[age]' derivation='None' name='[none:age:ok]' pivot='key' type='ordinal' />
             <column-instance column='[target]' derivation='None' name='[none:target:ok]' pivot='key' type='ordinal' />
-            <column-instance column='[thalach]' derivation='None' name='[none:thalach:ok]' pivot='key' type='ordinal' />
-            <column caption='Sex' datatype='integer' name='[sex]' role='dimension' type='ordinal'>
-              <aliases>
-                <alias key='0' value='Female' />
-                <alias key='1' value='Male' />
-              </aliases>
-            </column>
             <column aggregation='Sum' caption='Target' datatype='integer' name='[target]' role='dimension' type='ordinal'>
               <aliases>
                 <alias key='0' value='Negative' />
                 <alias key='1' value='Positive' />
               </aliases>
             </column>
-            <column caption='Thalach' datatype='integer' name='[thalach]' role='measure' type='quantitative' />
           </datasource-dependencies>
-          <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Age,Target,Thalach)]'>
-            <groupfilter function='crossjoin' user:ui-action-filter='[Action1_4343B06DE26240A885D0373FEE4904C5]' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[none:age:ok]' />
-              <groupfilter function='level-members' level='[target]' />
-              <groupfilter function='level-members' level='[none:thalach:ok]' />
-            </groupfilter>
-          </filter>
-          <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Exang,Target)]'>
-            <groupfilter function='crossjoin' user:ui-action-filter='[Action1_4343B06DE26240A885D0373FEE4904C5]' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[exang]' />
-              <groupfilter function='level-members' level='[target]' />
-            </groupfilter>
-          </filter>
-          <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Sex,Target)]'>
-            <groupfilter function='crossjoin' user:ui-action-filter='[Action1_4343B06DE26240A885D0373FEE4904C5]' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[sex]' />
-              <groupfilter function='level-members' level='[target]' />
-            </groupfilter>
-          </filter>
           <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[none:target:ok]'>
-            <groupfilter function='level-members' level='[none:target:ok]' user:ui-enumeration='all' user:ui-marker='enumerate' />
+            <groupfilter function='member' level='[none:target:ok]' member='0' user:ui-domain='database' user:ui-enumeration='inclusive' user:ui-marker='enumerate' />
           </filter>
           <slices>
             <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[none:target:ok]</column>
-            <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Exang,Target)]</column>
-            <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Age,Target,Thalach)]</column>
-            <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Sex,Target)]</column>
           </slices>
           <aggregation value='true' />
         </view>
@@ -1892,54 +1612,14 @@
             <datasource caption='heart' name='federated.0b9jao80r7rh8214xjojh13hjmun' />
           </datasources>
           <datasource-dependencies datasource='federated.0b9jao80r7rh8214xjojh13hjmun'>
-            <column caption='Age' datatype='integer' name='[age]' role='measure' type='quantitative' />
             <column-instance column='[target]' derivation='Count' name='[cnt:target:qk]' pivot='key' type='quantitative' />
-            <column aggregation='Sum' caption='Exang' datatype='integer' name='[exang]' role='dimension' type='ordinal'>
-              <aliases>
-                <alias key='0' value='Exercise-Induced Angina' />
-                <alias key='1' value='Not Exercise Induced' />
-              </aliases>
-            </column>
-            <column-instance column='[age]' derivation='None' name='[none:age:ok]' pivot='key' type='ordinal' />
-            <column-instance column='[thalach]' derivation='None' name='[none:thalach:ok]' pivot='key' type='ordinal' />
-            <column caption='Sex' datatype='integer' name='[sex]' role='dimension' type='ordinal'>
-              <aliases>
-                <alias key='0' value='Female' />
-                <alias key='1' value='Male' />
-              </aliases>
-            </column>
             <column aggregation='Sum' caption='Target' datatype='integer' name='[target]' role='dimension' type='ordinal'>
               <aliases>
                 <alias key='0' value='Negative' />
                 <alias key='1' value='Positive' />
               </aliases>
             </column>
-            <column caption='Thalach' datatype='integer' name='[thalach]' role='measure' type='quantitative' />
           </datasource-dependencies>
-          <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Age,Target,Thalach)]'>
-            <groupfilter function='crossjoin' user:ui-action-filter='[Action1_4343B06DE26240A885D0373FEE4904C5]' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[none:age:ok]' />
-              <groupfilter function='level-members' level='[target]' />
-              <groupfilter function='level-members' level='[none:thalach:ok]' />
-            </groupfilter>
-          </filter>
-          <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Exang,Target)]'>
-            <groupfilter function='crossjoin' user:ui-action-filter='[Action1_4343B06DE26240A885D0373FEE4904C5]' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[exang]' />
-              <groupfilter function='level-members' level='[target]' />
-            </groupfilter>
-          </filter>
-          <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Sex,Target)]'>
-            <groupfilter function='crossjoin' user:ui-action-filter='[Action1_4343B06DE26240A885D0373FEE4904C5]' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[sex]' />
-              <groupfilter function='level-members' level='[target]' />
-            </groupfilter>
-          </filter>
-          <slices>
-            <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Exang,Target)]</column>
-            <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Age,Target,Thalach)]</column>
-            <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Sex,Target)]</column>
-          </slices>
           <aggregation value='true' />
         </view>
         <style>
@@ -2032,58 +1712,20 @@
             <datasource caption='heart' name='federated.0b9jao80r7rh8214xjojh13hjmun' />
           </datasources>
           <datasource-dependencies datasource='federated.0b9jao80r7rh8214xjojh13hjmun'>
-            <column caption='Age' datatype='integer' name='[age]' role='measure' type='quantitative' />
             <column-instance column='[target]' derivation='Count' name='[cnt:target:qk]' pivot='key' type='quantitative' />
-            <column aggregation='Sum' caption='Exang' datatype='integer' name='[exang]' role='dimension' type='ordinal'>
-              <aliases>
-                <alias key='0' value='Exercise-Induced Angina' />
-                <alias key='1' value='Not Exercise Induced' />
-              </aliases>
-            </column>
-            <column-instance column='[age]' derivation='None' name='[none:age:ok]' pivot='key' type='ordinal' />
             <column-instance column='[target]' derivation='None' name='[none:target:ok]' pivot='key' type='ordinal' />
-            <column-instance column='[thalach]' derivation='None' name='[none:thalach:ok]' pivot='key' type='ordinal' />
-            <column caption='Sex' datatype='integer' name='[sex]' role='dimension' type='ordinal'>
-              <aliases>
-                <alias key='0' value='Female' />
-                <alias key='1' value='Male' />
-              </aliases>
-            </column>
             <column aggregation='Sum' caption='Target' datatype='integer' name='[target]' role='dimension' type='ordinal'>
               <aliases>
                 <alias key='0' value='Negative' />
                 <alias key='1' value='Positive' />
               </aliases>
             </column>
-            <column caption='Thalach' datatype='integer' name='[thalach]' role='measure' type='quantitative' />
           </datasource-dependencies>
-          <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Age,Target,Thalach)]'>
-            <groupfilter function='crossjoin' user:ui-action-filter='[Action1_4343B06DE26240A885D0373FEE4904C5]' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[none:age:ok]' />
-              <groupfilter function='level-members' level='[target]' />
-              <groupfilter function='level-members' level='[none:thalach:ok]' />
-            </groupfilter>
-          </filter>
-          <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Exang,Target)]'>
-            <groupfilter function='crossjoin' user:ui-action-filter='[Action1_4343B06DE26240A885D0373FEE4904C5]' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[exang]' />
-              <groupfilter function='level-members' level='[target]' />
-            </groupfilter>
-          </filter>
-          <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Sex,Target)]'>
-            <groupfilter function='crossjoin' user:ui-action-filter='[Action1_4343B06DE26240A885D0373FEE4904C5]' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[sex]' />
-              <groupfilter function='level-members' level='[target]' />
-            </groupfilter>
-          </filter>
           <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[none:target:ok]'>
-            <groupfilter function='level-members' level='[none:target:ok]' user:ui-enumeration='all' user:ui-marker='enumerate' />
+            <groupfilter function='member' level='[none:target:ok]' member='1' user:ui-domain='database' user:ui-enumeration='inclusive' user:ui-marker='enumerate' />
           </filter>
           <slices>
             <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[none:target:ok]</column>
-            <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Exang,Target)]</column>
-            <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Age,Target,Thalach)]</column>
-            <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Sex,Target)]</column>
           </slices>
           <aggregation value='true' />
         </view>
@@ -2180,57 +1822,17 @@
             <column aggregation='None' datatype='integer' name='[Chol (bin)]' role='dimension' type='quantitative'>
               <calculation class='bin' decimals='1' formula='[chol]' peg='0' size='23.3' />
             </column>
-            <column caption='Age' datatype='integer' name='[age]' role='measure' type='quantitative' />
             <column caption='Chol' datatype='integer' name='[chol]' role='measure' type='quantitative' />
             <column-instance column='[chol]' derivation='Count' name='[cnt:chol:qk]' pivot='key' type='quantitative' />
-            <column aggregation='Sum' caption='Exang' datatype='integer' name='[exang]' role='dimension' type='ordinal'>
-              <aliases>
-                <alias key='0' value='Exercise-Induced Angina' />
-                <alias key='1' value='Not Exercise Induced' />
-              </aliases>
-            </column>
             <column-instance column='[Chol (bin)]' derivation='None' name='[none:Chol (bin):qk]' pivot='key' type='quantitative' />
-            <column-instance column='[age]' derivation='None' name='[none:age:ok]' pivot='key' type='ordinal' />
             <column-instance column='[target]' derivation='None' name='[none:target:ok]' pivot='key' type='ordinal' />
-            <column-instance column='[thalach]' derivation='None' name='[none:thalach:ok]' pivot='key' type='ordinal' />
-            <column caption='Sex' datatype='integer' name='[sex]' role='dimension' type='ordinal'>
-              <aliases>
-                <alias key='0' value='Female' />
-                <alias key='1' value='Male' />
-              </aliases>
-            </column>
             <column aggregation='Sum' caption='Target' datatype='integer' name='[target]' role='dimension' type='ordinal'>
               <aliases>
                 <alias key='0' value='Negative' />
                 <alias key='1' value='Positive' />
               </aliases>
             </column>
-            <column caption='Thalach' datatype='integer' name='[thalach]' role='measure' type='quantitative' />
           </datasource-dependencies>
-          <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Age,Target,Thalach)]'>
-            <groupfilter function='crossjoin' user:ui-action-filter='[Action1_4343B06DE26240A885D0373FEE4904C5]' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[none:age:ok]' />
-              <groupfilter function='level-members' level='[target]' />
-              <groupfilter function='level-members' level='[none:thalach:ok]' />
-            </groupfilter>
-          </filter>
-          <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Exang,Target)]'>
-            <groupfilter function='crossjoin' user:ui-action-filter='[Action1_4343B06DE26240A885D0373FEE4904C5]' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[exang]' />
-              <groupfilter function='level-members' level='[target]' />
-            </groupfilter>
-          </filter>
-          <filter class='categorical' column='[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Sex,Target)]'>
-            <groupfilter function='crossjoin' user:ui-action-filter='[Action1_4343B06DE26240A885D0373FEE4904C5]' user:ui-enumeration='all' user:ui-marker='enumerate'>
-              <groupfilter function='level-members' level='[sex]' />
-              <groupfilter function='level-members' level='[target]' />
-            </groupfilter>
-          </filter>
-          <slices>
-            <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Exang,Target)]</column>
-            <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Age,Target,Thalach)]</column>
-            <column>[federated.0b9jao80r7rh8214xjojh13hjmun].[Action (Sex,Target)]</column>
-          </slices>
           <aggregation value='true' />
         </view>
         <style>
@@ -2452,8 +2054,8 @@
           </layout-options>
           <size maxheight='2400' minheight='2400' sizing-mode='vscroll' />
           <zones>
-            <zone h='100000' id='50' type-v2='layout-basic' w='100000' x='0' y='0'>
-              <zone h='98666' id='49' param='vert' type-v2='layout-flow' w='98994' x='503' y='667'>
+            <zone h='100000' id='52' type-v2='layout-basic' w='100000' x='0' y='0'>
+              <zone h='98666' id='51' param='vert' type-v2='layout-flow' w='98994' x='503' y='667'>
                 <zone fixed-size='68' h='6334' id='36' type-v2='title' w='98994' x='503' y='667'>
                   <zone-style>
                     <format attr='border-color' value='#000000' />
@@ -2598,7 +2200,7 @@
     <window class='worksheet' name='Heart Disease on Gender'>
       <cards>
         <edge name='left'>
-          <strip size='160'>
+          <strip size='200'>
             <card type='pages' />
             <card type='filters' />
             <card type='marks' />
@@ -2728,7 +2330,7 @@
     <window class='worksheet' name='Serum Cholesterol'>
       <cards>
         <edge name='left'>
-          <strip size='160'>
+          <strip size='200'>
             <card type='pages' />
             <card type='filters' />
             <card type='marks' />
@@ -2746,7 +2348,7 @@
           </strip>
         </edge>
         <edge name='right'>
-          <strip size='160'>
+          <strip size='200'>
             <card pane-specification-id='0' param='[federated.0b9jao80r7rh8214xjojh13hjmun].[none:target:ok]' type='color' />
           </strip>
         </edge>
@@ -2766,7 +2368,7 @@
     <window class='worksheet' name='Blood Pressure'>
       <cards>
         <edge name='left'>
-          <strip size='160'>
+          <strip size='200'>
             <card type='pages' />
             <card type='filters' />
             <card type='marks' />
@@ -2784,7 +2386,7 @@
           </strip>
         </edge>
         <edge name='right'>
-          <strip size='160'>
+          <strip size='200'>
             <card pane-specification-id='0' param='[federated.0b9jao80r7rh8214xjojh13hjmun].[none:target:ok]' type='color' />
           </strip>
         </edge>
@@ -2804,7 +2406,7 @@
     <window class='worksheet' name='Blood Pressure -Age'>
       <cards>
         <edge name='left'>
-          <strip size='160'>
+          <strip size='200'>
             <card type='pages' />
             <card type='filters' />
             <card type='marks' />
@@ -2822,7 +2424,7 @@
           </strip>
         </edge>
         <edge name='right'>
-          <strip size='160'>
+          <strip size='200'>
             <card pane-specification-id='0' param='[federated.0b9jao80r7rh8214xjojh13hjmun].[none:target:ok]' type='color' />
           </strip>
         </edge>
@@ -2842,7 +2444,7 @@
     <window class='worksheet' name='Positive Cases'>
       <cards>
         <edge name='left'>
-          <strip size='160'>
+          <strip size='200'>
             <card type='pages' />
             <card type='filters' />
             <card type='marks' />
@@ -2876,7 +2478,7 @@
     <window class='worksheet' name='Negative Cases'>
       <cards>
         <edge name='left'>
-          <strip size='160'>
+          <strip size='200'>
             <card type='pages' />
             <card type='filters' />
             <card type='marks' />
@@ -2910,7 +2512,7 @@
     <window class='worksheet' name='Males'>
       <cards>
         <edge name='left'>
-          <strip size='160'>
+          <strip size='200'>
             <card type='pages' />
             <card type='filters' />
             <card type='marks' />
@@ -3106,7 +2708,7 @@
           <zoom type='entire-view' />
         </viewpoint>
       </viewpoints>
-      <active id='36' />
+      <active id='9' />
       <simple-id uuid='{06EB4C92-F991-479A-A964-041D8201F25F}' />
     </window>
   </windows>
@@ -3747,22 +3349,24 @@
     </thumbnail>
     <thumbnail height='192' name='Females' width='192'>
       iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAACXBIWXMAABJ0AAASdAHeZh94
-      AAADKklEQVR4nO3XwaulcxzH8e9xz2hWWJlGXSKK2VgyEyuxkvwFakLkD5CNP0AWd6OkxEJE
-      E5msZCcLg900jMJmNNbG4pyauo+FlH/APXXfr9fmeZ7dZ/Pu93tWy7IsA1HrmZnl5l8zowN6
-      1v88lvnmva9nc2O72zVwxNb/vmz+3Mzph+6a/Yf3d7kHjtT6vx8nbzs5t5++Y1db4MjdsusB
-      sEsCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQ
-      JgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkC
-      IE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDS
-      BECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0A
-      pAmANAGQJgDSBECaAEgTAGkCIG296wHwf7t27ff54MNPZmaZ588/N6dO3Tm//PrbbDdbJwDH
-      3+GyzEsvnp9nn3l63njzYC5fvjKvvvb6/HT1ZwFw/N1z9/5c+fHqvPPu+/PUk0/MmTMPzttv
-      HcyJW08IgOPv8PBwHn/s7Lzy8gvz+cUvZm9vb1ar1cz4ByDg088uzqXvfpjNdjvnzj463176
-      fj76+MJcv/7HrJZlWZabN+argy/n3kfum/vPPbDrvXBkXIFIEwBpAiBNAKQJgDQBkCYA0gRA
-      mgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJ
-      gDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBI
-      EwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQB
-      kCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBp
-      AiDtb9eBVMffA3bXAAAAAElFTkSuQmCC
+      AAADqUlEQVR4nO3Xv6tXdRzH8ZfX71DgvbehK1jcwXRpEh0qS8LQqCUI6ccddCxIBAmCxiIw
+      KYqIyKFI8lIWQlNGRUMiN9oEozHv7HW40nW4wbV7GqLoD4j7hft6PJbPOZzl/RmefD5nyzAM
+      Q6DUKEmGtVtJdECf0d/LkIWzl7O68sd4p4ENNvrnYfX31ey4/57M7pkd5zywoUb/fblj6s5M
+      77hrXLPAhpsY9wAwTgKgmgCoJgCqCYBqAqCaAKgmAKoJgGoCoJoAqCYAqgmAagKgmgCoJgCq
+      CYBqAqCaAKgmAKoJgGoCoJoAqCYAqgmAagKgmgCoJgCqCYBqAqCaAKgmAKoJgGoCoJoAqCYA
+      qgmAagKgmgCoJgCqCYBqAqCaAKgmAKoJgGoCoJoAqCYAqgmAagKgmgCoJgCqCYBqAqCaAKgm
+      AKoJgGoCoJoAqCYAqgmAagKgmgCoJgCqCYBqAqCaAKgmAKoJgGoCoJoAqCYAqgmAagKgmgCo
+      JgCqCYBqAqCaAKgmAKoJgGoCoJoAqCYAqgmAagKgmgCoJgCqCYBqAqDaaNwDwP9leXk5n86f
+      z8rKrRw7Opdd9+3M9etL+fHS5cw9/0yWb97MufnzWVtby/GXXsjktm1OADaP27f/zHPPHsmJ
+      4y/mtddPZWnpRk6cfCVfXvgqSXLlytUcefqp7H/ogXx45qMkrkBsItu3z2Rp6Ube/+BMDh96
+      LDMzd+ezcx9nanIySXL40MFsHY3y9Tff5cAj+5O4ArGJrK+vZ9/ePZmdvTcnX341x47OZWJi
+      67/fF376OZ9/cSFvvflGpqenkgiATeTS5YVcvPhthmHIvr178tu1xXxydj5Xf/k1p06/k2uL
+      ixmNRjn99rs5+OiBPPnE49kyDMMwrK3kh/e+z84Hd2X3w7vHvQ/YMP4BqCYAqgmAagKgmgCo
+      JgCqCYBqAqCaAKgmAKoJgGoCoJoAqCYAqgmAagKgmgCoJgCqCYBqAqCaAKgmAKoJgGoCoJoA
+      qCYAqgmAagKgmgCoJgCqCYBqAqCaAKgmAKoJgGoCoJoAqCYAqgmAagKgmgCoJgCqCYBqAqCa
+      AKgmAKoJgGoCoJoAqCYAqgmAagKgmgCoJgCqCYBqAqCaAKgmAKoJgGoCoJoAqCYAqgmAagKg
+      mgCoJgCqCYBqAqCaAKgmAKoJgGoCoJoAqCYAqgmAagKgmgCoJgCqCYBqAqCaAKgmAKoJgGoC
+      oJoAqCYAqgmAagKgmgCoJgCqCYBqfwHRfnXiS4s+IQAAAABJRU5ErkJggg==
     </thumbnail>
     <thumbnail height='192' name='Heart Disease on Gender' width='192'>
       iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAACXBIWXMAABJ0AAASdAHeZh94
@@ -3819,78 +3423,88 @@
     </thumbnail>
     <thumbnail height='192' name='Males' width='192'>
       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
-      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
+      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
+      mgCoJgCq/QOi32gxIh5bzAAAAABJRU5ErkJggg==
     </thumbnail>
     <thumbnail height='192' name='Negative Cases' width='192'>
       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
-      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
+      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
+      oNpfXR6Sad/fdPYAAAAASUVORK5CYII=
     </thumbnail>
     <thumbnail height='192' name='Number of Samples' width='192'>
       iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAACXBIWXMAABJ0AAASdAHeZh94
-      AAADXklEQVR4nO3XQYincxjA8Wdm/jtWI7ZwEil2DyS7KQflxl1ykJtycHWVA7nIRa1SNm1O
-      e1mJw9K25bCJC+3WFqtVy4EjWYfVTuPvIGVabprJfD+fy/u+T731HH7f3t6V5XK5HIhazMws
-      N3+dGR3Qs/jzspxPj5+dq1d+291tYIct/rq5+svV2bz7jlkcunM394Edtfj7w+rG/lm7/cBu
-      7QI7bnW3F4DdJADSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDS
-      BECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0A
-      pAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECa
-      AEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBECaAEgTAGkCIE0ApAmA
-      NAGQJgDSBECaAEgTAGkCIE0ApAmANAGQJgDSBMCe9eP3l+ez06e2zX7f2pqPTrw77x17czav
-      XRMAe9N333w9x159aT4/8/G2+dlTH87q2mIOPnBkLl04LwD2prvuPTQvvH50FovFtvmlC+fm
-      8COPzqEHj8wPl7+dxb+8D/9rq2trs7Kyct184+Zb5srPP836Dfvnxo2bBMDedPHcF/PJByfn
-      4vkv5/133pr7Hnp4Ll/8ah578uk5/trLs7q2mOdefGVWlsvlcrl5Zc68cXq27r9n9h0+uNu7
-      w3/u5NtH5/GnnpkDt962be4LQMITzz4/+9bXr5v7CSbhnw7/jACIEwBpAiBNAKQJgDQBkCYA
-      0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBN
-      AKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRA
-      mgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJ
-      gDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBI
-      +wPXMViGU29ytwAAAABJRU5ErkJggg==
+      AAAD6UlEQVR4nO3XT4hVZRzH4d+99yiRzowtWkQZUmpQSBOIoEa5sBYuJHTjKmjVNmiTEESL
+      CCKIWZRBIlkUIlgRYogZIVI0QRAD/UFMWxhk6fzTJrgTp0UEWRuLmMvM93k255yXd/F74Xzg
+      nE7btm1BqKaqqu3PVpUOyNP8cWnr9IFTNTfz62CngQXW/HkzNz1X/TW3VrN+9SDngQXV/PWh
+      u+KG6t28alCzwILrDnoAGCQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0A
+      RBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBN
+      AEQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQ
+      TQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQB
+      EE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQAsepM/XayT
+      7x6+Zq1t2zp19L16a+yFmp2arPl+v47sf7kO7xuruatX6ofz39X+558RAIvb7NRkjT31RH30
+      twC+/mK8vj/zTW3bubsOvvhcXTh3trY8tKPWbRito28eqInxT+u+rQ8KgMVt5fBIPf3q63Xj
+      0PA162cmvqx7N99ft9y+pmamJmv12vXVbZr6/OMTdffGTfXLldk6fez9agY0N/wvOt1uddre
+      P9ZXjqyq6cuXan5+vrqdTk1f+rneee2VevTJvbViaLjuGt1YvV6vOm3btm1/pk68dLx+u+fO
+      Wja6bgDHgP/mwrmzdeztg/XZyeO1beeu2r57T3145FA98tjjte/ZvdXrNbX54R11dWa6JsY/
+      qaGRm2p06wN1+eKPdf7brwTA0vLBoTdqw6Ytddsda69rv08glpTtu/bUsuXLr3u/n2CWlH/z
+      8lcJgHACIJoAiCYAogmAaAIgmgCIJgCiCYBoAiCaAIgmAKIJgGgCIJoAiCYAogmAaAIgmgCI
+      JgCiCYBoAiCaAIgmAKIJgGgCIJoAiCYAogmAaAIgmgCIJgCiCYBoAiCaAIgmAKIJgGgCIJoA
+      iCYAogmAaAIgmgCIJgCiCYBoAiCaAIgmAKIJgGgCIJoAiCYAogmAaAIgmgCIJgCiCYBoAiCa
+      AIgmAKIJgGgCIJoAiCYAogmAaAIgmgCIJgCiCYBoAiCaAIgmAKIJgGgCIJoAiCYAogmAaAIg
+      mgCIJgCiCYBoAiCaAIgmAKIJgGgCIJoAiCYAogmAaL8DecmYXVHu9PQAAAAASUVORK5CYII=
     </thumbnail>
     <thumbnail height='192' name='Positive Cases' width='192'>
       iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAACXBIWXMAABJ0AAASdAHeZh94
-      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
+      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
     </thumbnail>
     <thumbnail height='192' name='Serum Cholesterol' width='192'>
       iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAACXBIWXMAABJ0AAASdAHeZh94
